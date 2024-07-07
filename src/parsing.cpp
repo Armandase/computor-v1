@@ -1,26 +1,36 @@
 #include "../inc/parsing.h"
-#include "../inc/Monom.h"
-#include "../inc/Polynom.h"
-#include <string>
-#include <algorithm>
+
+Polynom getMonomFromString(const std::string& str)
+{
+    std::vector<std::pair<std::string, char> > vecStringMonom = getMonoms(str);
+    std::vector<Monom> vecMonoms;
+    for (auto& token : vecStringMonom){
+        vecMonoms.emplace_back(Monom(token.first, token.second));
+    }
+    Polynom result(vecMonoms);
+    result.sortPolynom();
+    return (result);
+}
 
 void handleInput(std::string& input)
 {
     std::string::iterator end_pos = std::remove(input.begin(), input.end(), ' ');
     input.erase(end_pos, input.end());
 
-    std::cout << input<< std::endl;
+    std::cout << input << std::endl;
 
     int equal = foundOccurenceOf(input, '=');
-    std::vector<std::pair<std::string, char> > leftMonoms = getMonoms(input.substr(0, equal));
-    // std::vector<std::string> monoms = splitWithDelim(leftPart, "*");
-    std::vector<Monom> vecMonoms;
-    for (auto& token : leftMonoms){
-        // std::cout << token.first << " sign:"<< token.second << std::endl;
-        vecMonoms.emplace_back(Monom(token.first, token.second));
-    }
-    Polynom left(vecMonoms);
-    left.printPolynom();
+    std::string left(input.substr(0, equal));
+    std::string right(input.substr(equal + 1));
+
+    Polynom leftPart = getMonomFromString(left);
+    Polynom rightPart = getMonomFromString(right);
+    
+    leftPart.printPolynom();
+    rightPart.printPolynom();
+
+    leftPart.toNull(rightPart);
+    leftPart.printPolynom();
     return;
 }
 

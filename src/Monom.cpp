@@ -13,6 +13,12 @@ Monom::Monom(const std::string& input, char sign){
 	parseMonom(input, sign);
 }
 
+Monom::Monom(std::string& variable, std::size_t order, double value){
+	m_order = order;
+    m_value = value;
+	m_variable = variable;
+}
+
 Monom::Monom(const Monom &copy){
 	*this = copy;
 }
@@ -27,136 +33,119 @@ Monom & Monom::operator=(const Monom &copy){
 	return (*this);
 }
 
-int findUniqueOf(const std::string& str, char target)
-{
-	auto index = str.find_first_of(target);
-	
-	if (str.find_last_of(target) != index || index == std::string::npos)
+Monom Monom::operator+(const Monom& add){
+	if (add.getOrder() != this->m_order)
 	{
-		return (-1); 
+		std::cerr << __FUNCTION__ << ": " << " error monom addition between different order" << std::endl;
+		exit(1);
 	}
-
-	return (index);
+	if (add.getVariable() != this->m_variable)
+	{
+		std::cerr << __FUNCTION__ << ": " << " error monom addition between different variable" << std::endl;
+		exit(1);
+	}
+	return (Monom(m_variable, m_order, m_value + add.getValue()));
 }
 
-char	findVariableName(const std::string& str)
-{
-	int size = str.size();
-	char varName = 0;
-	
-	for (int i = 0; i < size; i++)
+Monom Monom::operator-(const Monom& sub){
+	if (sub.getOrder() != this->m_order)
 	{
-		if (std::isalpha(str[i]) && varName == 0)
-			varName = str[i];
-		else if (std::isalpha(str[i]))
-		{
-			std::cerr << __FUNCTION__ << ": " << "Multiple variable declaration in a monom." << std::endl;
-			exit(1);
-		}
-	}
-	if (varName == 0)
-	{
-		std::cerr << __FUNCTION__ << ": " << "Variable name not found." << std::endl;
+		std::cerr << __FUNCTION__ << ": " << " error monom substraction between different order" << std::endl;
 		exit(1);
 	}
-	return (varName);
+	if (sub.getVariable() != this->m_variable)
+	{
+		std::cerr << __FUNCTION__ << ": " << " error monom substraction between different variable" << std::endl;
+		exit(1);
+	}
+	return (Monom(m_variable, m_order, m_value - sub.getValue()));
 }
 
-int convertStringToInt(const std::string& str)
-{
-	int result = 0;
-
-	for (std::size_t i = 0; i < str.size(); i++)
+void Monom::operator+=(const Monom& add){
+	if (add.getOrder() != this->m_order)
 	{
-		if (!std::isdigit(str[i]))
-		{
-			std::cerr << __FUNCTION__ << ": " << "another char in the exponential section." << std::endl;
-			exit(1);
-		}
-	}
-
-	try {
-		result = std::stoi(str);
-	} catch (std::invalid_argument &e) {
-		std::cerr << __FUNCTION__ << ": " << "stoi invalid argument" << std::endl;
-		exit(1);
-	} catch (std::exception &e) {
-		std::cerr << __FUNCTION__ << ": " << " exception throw from " << e.what() << std::endl;
+		std::cerr << __FUNCTION__ << ": " << " error monom assignement addition between different order" << std::endl;
 		exit(1);
 	}
-	return (result);
+	if (add.getVariable() != this->m_variable)
+	{
+		std::cerr << __FUNCTION__ << ": " << " error monom assignement addition between different variable" << std::endl;
+		exit(1);
+	}
+	m_value += add.getValue();
 }
 
-double convertStringToDouble(const std::string& str)
-{
-	int result = 0;
-
-	bool dot = false;
-	for (std::size_t i = 0; i < str.size(); i++)
+void Monom::operator-=(const Monom& sub){
+	if (sub.getOrder() != this->m_order)
 	{
-		if (!std::isdigit(str[i]) && str[i] != '.')
-		{
-			std::cerr << __FUNCTION__ << ": " << "another char in the exponential section." << std::endl;
-			exit(1);
-		}
-		if (str[i] == '.')
-		{
-			if (dot)
-			{
-				std::cerr << __FUNCTION__ << ": " << "multiple dots in the value section." << std::endl;
-				exit(1);
-			}
-			dot = true;
-		}
-	}
-
-	try {
-		result = std::stod(str);
-	} catch (std::invalid_argument &e) {
-		std::cerr << __FUNCTION__ << ": " << "stod invalid argument" << std::endl;
-		exit(1);
-	} catch (std::exception &e) {
-		std::cerr << __FUNCTION__ << ": " << " exception throw from " << e.what() << std::endl;
+		std::cerr << __FUNCTION__ << ": " << " error monom  assignement substraction between different order" << std::endl;
 		exit(1);
 	}
-	return (result);
+	if (sub.getVariable() != this->m_variable)
+	{
+		std::cerr << __FUNCTION__ << ": " << " error monom assignement substraction between different variable" << std::endl;
+		exit(1);
+	}
+	m_value -= sub.getValue();
 }
+
 
 void Monom::parseMonom(const std::string& input, char sign)
 {
-	std::cout << "input: " << input << std::endl;
+	bool inputDouble = false;
 	char varName = findVariableName(input);
 
+	// if the variable name is undefine, it's set to the default one ('x')
+	if (varName == 0)
+	{
+		varName = m_variable[0];
+		inputDouble = true;
+		std::cout << "|" << m_variable << "|" << std::endl;
+	}
+
+	// find the index of the variable, the value & the expenontial
 	int varIndex = findUniqueOf(input, varName);
 	int valueIndex = findUniqueOf(input, '*');
 	int expIndex = findUniqueOf(input, '^');
 
+	// if the exponential isn't set, set to 1 as default
 	if(expIndex == -1)
 		m_order = 1;
+	// if the value isn't set, set to 1 as default
 	if (valueIndex == -1)
 		m_value = 1;
-	if (expIndex <= varIndex)
+
+	m_variable = std::string(1, varName);
+	// check if the '^' is before the 'x' 
+	// check also if the number is after the '^' 
+	if ((expIndex <= varIndex || valueIndex > expIndex) && valueIndex != -1 && expIndex != -1)
 	{
 		std::cerr << __FUNCTION__ << ": " << "wrong placement of an exponential." << std::endl;
 		exit(1);
 	}
-	m_variable = std::string(1, varName);
 
-	std::string value;
-	std::string order;
-
-	if (valueIndex < expIndex)
+	std::string value = input.substr(0, valueIndex);
+	std::string order = input.substr(expIndex + 1);
+	
+	// if exponential & value aren't set and the input doesn't contains variable name 
+	if (expIndex == -1 && valueIndex == -1 && inputDouble)
+		m_value = convertStringToDouble(input);
+	// if exponential & value aren't set and the input contains a variable.
+	// it remove the variable and process it to convert the string to a double 
+	else if (expIndex == -1 && valueIndex == -1 && !inputDouble && input.size() > 1)
 	{
-		value = input.substr(0, valueIndex);
-		order = input.substr(expIndex + 1);
-	} else {
-		value = input.substr(valueIndex + 1);
-		order = input.substr(expIndex + 1, valueIndex - expIndex - 1);
+		auto withoutVariable = input;
+		withoutVariable.erase(varIndex, varIndex + 1);
+		m_value = convertStringToDouble(withoutVariable);
 	}
-	if (!m_value)
-		m_value = convertStringToDouble(value);
-	if (!m_order)
-		m_order = convertStringToInt(order);
+	else {
+		if (!m_value)
+			m_value = convertStringToDouble(value);
+		if (!m_order)
+			m_order = convertStringToInt(order);
+	}
+
+
 	if (sign == '-')
 		m_value *= -1;
 }
@@ -167,3 +156,13 @@ std::string Monom::monomAsString() const
 	+ " * " + m_variable
 	+ "^" + std::to_string(m_order));
 }
+
+std::string	Monom::getVariable() const
+{ return (m_variable); }
+
+std::size_t	Monom::getOrder() const
+{ return (m_order); }
+
+double		Monom::getValue() const
+{ return (m_value); }
+
