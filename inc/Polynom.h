@@ -4,6 +4,7 @@
 # include <iostream>
 # include <vector>
 # include <algorithm>
+# include <cmath>
 # include "Monom.h"
 
 class Monom;
@@ -20,8 +21,16 @@ class Polynom
 		void addMonom(const Monom& monom);
 		void printPolynom() const;
 		void sortPolynom();
-		std::size_t	 findByOrder(std::size_t target);
+		int	 findByOrder(std::size_t target) const;
 		void toNull(const Polynom& toNull);
+		void cleanVecMonom();
+
+		double computeDiscriminant() const;
+		std::pair<double, double> resolveEquation(double discriminant);
+		double processEquation(double x);
+
+		std::size_t getMaxOrder() const;
+		std::tuple<double, double, double> getCoefficient() const;
 
 		std::vector<Monom> getVecMonoms() const;
 	 private:

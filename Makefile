@@ -4,7 +4,7 @@ CXX		=	c++
 NAME 	= 	computor
 SRC 	=	main.cpp parsing.cpp Monom.cpp Polynom.cpp parsing_utils.cpp
 
-HEADER	=	inc/parsing.h inc/Monom.h inc/Polynom.h
+HEADER	=	inc/parsing.h inc/Monom.h inc/Polynom.h inc/parsing_utils.h
 OBJS	=	$(addprefix obj/, $(SRC:.cpp=.o))
 CXXFLAGS=	-Wall -Wextra -Werror --std=c++17 -g
 

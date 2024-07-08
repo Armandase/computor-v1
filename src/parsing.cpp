@@ -12,7 +12,7 @@ Polynom getMonomFromString(const std::string& str)
     return (result);
 }
 
-void handleInput(std::string& input)
+Polynom handleInput(std::string& input)
 {
     std::string::iterator end_pos = std::remove(input.begin(), input.end(), ' ');
     input.erase(end_pos, input.end());
@@ -26,12 +26,8 @@ void handleInput(std::string& input)
     Polynom leftPart = getMonomFromString(left);
     Polynom rightPart = getMonomFromString(right);
     
-    leftPart.printPolynom();
-    rightPart.printPolynom();
-
     leftPart.toNull(rightPart);
-    leftPart.printPolynom();
-    return;
+    return leftPart;
 }
 
 std::vector<std::pair<std::string, char> > getMonoms(std::string input)

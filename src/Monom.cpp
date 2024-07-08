@@ -3,13 +3,13 @@
 Monom::Monom(){
 	m_order = 0;
     m_value = 0;
-	m_variable = "x";
+	m_variable = "";
 }
 
 Monom::Monom(const std::string& input, char sign){
 	m_order = 0;
     m_value = 0;
-	m_variable = "x";
+	m_variable = "";
 	parseMonom(input, sign);
 }
 
@@ -81,7 +81,7 @@ void Monom::operator-=(const Monom& sub){
 		std::cerr << __FUNCTION__ << ": " << " error monom  assignement substraction between different order" << std::endl;
 		exit(1);
 	}
-	if (sub.getVariable() != this->m_variable)
+	if (sub.getVariable() != this->m_variable && !sub.getVariable().size() && !m_variable.size())
 	{
 		std::cerr << __FUNCTION__ << ": " << " error monom assignement substraction between different variable" << std::endl;
 		exit(1);
@@ -100,7 +100,6 @@ void Monom::parseMonom(const std::string& input, char sign)
 	{
 		varName = m_variable[0];
 		inputDouble = true;
-		std::cout << "|" << m_variable << "|" << std::endl;
 	}
 
 	// find the index of the variable, the value & the expenontial
