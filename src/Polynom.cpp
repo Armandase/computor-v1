@@ -184,7 +184,7 @@ std::pair<double, double> Polynom::resolveEquation(double discriminant){
 	return {0., 0.};
 }
 
-double Polynom::processEquation(double x){
+double Polynom::computeY(double x){
 	size_t size = m_vecMonoms.size();
 	double sum = 0.;
 

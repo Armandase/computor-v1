@@ -4,14 +4,18 @@ CXX		=	c++
 NAME 	= 	computor
 SRC 	=	main.cpp parsing.cpp Monom.cpp Polynom.cpp parsing_utils.cpp
 
-HEADER	=	inc/parsing.h inc/Monom.h inc/Polynom.h inc/parsing_utils.h
+HEADER	=	inc/parsing.h inc/Monom.h inc/Polynom.h inc/parsing_utils.h inc/matplotlibcpp.h
 OBJS	=	$(addprefix obj/, $(SRC:.cpp=.o))
-CXXFLAGS=	-Wall -Wextra -Werror --std=c++17 -g
+CXXFLAGS=	-Wall -Wextra -Werror --std=c++17 -g -DPLOT -DWITHOUT_NUMPY
+LDFLAGS	=	-lpython3.10
 
 all		:	${NAME} 
 
 ${NAME}	:	${OBJS} ${HEADER}
-			${CXX} -o ${NAME} ${OBJS}
+			${CXX} -o ${NAME} ${OBJS} ${LDFLAGS}
+
+lib		:	
+			pip install matplotlib
 
 obj/%.o: src/%.cpp $(HEADER)
 	@mkdir -p $(@D)

@@ -1,5 +1,26 @@
 #include "../inc/parsing.h"
+#include "../inc/matplotlibcpp.h"
 #include <iostream>
+
+namespace plt = matplotlibcpp;
+
+void plotGraph(Polynom& equation)
+{
+    std::vector<double> x;
+    std::vector<double> y;
+
+    for (double i = -10; i < 10; i += 0.1)
+    {
+        x.push_back(i);
+        y.push_back(equation.computeY(i));
+    }
+
+    plt::plot(x, y);
+    plt::title("Second Degree Equation");
+    plt::xlabel("x");
+    plt::ylabel("y");
+    plt::show();
+}
 
 int main(int ac, char** av)
 {
@@ -36,6 +57,7 @@ int main(int ac, char** av)
         std::cout << result.second << std::endl;
     }
 
-    
+    plotGraph(equation);
+
     return 0;
 }

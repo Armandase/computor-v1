@@ -27,7 +27,7 @@ class Polynom
 
 		double computeDiscriminant() const;
 		std::pair<double, double> resolveEquation(double discriminant);
-		double processEquation(double x);
+		double computeY(double x);
 
 		std::size_t getMaxOrder() const;
 		std::tuple<double, double, double> getCoefficient() const;
