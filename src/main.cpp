@@ -16,7 +16,7 @@ void plotGraph(Polynom& equation)
     }
 
     plt::plot(x, y);
-    plt::title("Second Degree Equation");
+    plt::title("Polynom");
     plt::xlabel("x");
     plt::ylabel("y");
     plt::show();
@@ -31,7 +31,11 @@ int main(int ac, char** av)
 
     std::string input = av[1];
     Polynom equation = handleInput(input);
-    
+    if (equation.getVecMonoms().empty())
+    {
+        std::cerr << "This is a trivial equation with an infinit number of solution." << std::endl;
+        return 1;
+    }
     auto maxOrder = equation.getMaxOrder();
     std::cout << "Reduced form: ";
     equation.printPolynom();
@@ -42,22 +46,35 @@ int main(int ac, char** av)
         std::cout << "The polynomial degree is strictly greater than 2, I can't solve." << std::endl;
     }
 
-    double discriminant = equation.computeDiscriminant();
-    std::cout << "The disciminant is " <<  discriminant << std::endl;
-    if (discriminant < 0)
-    {
-        std::cout << "Discriminant is strictly negative, there is not solution." << std::endl;
-    } else if (discriminant == 0){
-        std::cout << "Discriminant is null, the solution is:" << std::endl;
-        std::cout << equation.resolveEquation(discriminant).first << std::endl;
-    } else {
-        std::cout << "Discriminant is strictly positive, the two solutions are:" << std::endl;
-        auto result = equation.resolveEquation(discriminant);
-        std::cout << result.first << std::endl;
-        std::cout << result.second << std::endl;
+    if (maxOrder == 1){
+        double a = equation.getValueByOrder(1);
+        double b = equation.getValueByOrder(0);
+
+        std::cout << "The solution is:" << std::endl;
+        std::cout << -b / a << std::endl;
+
+    } else if (maxOrder == 2){
+        double discriminant = equation.computeDiscriminant();
+        std::cout << "The disciminant is " <<  discriminant << std::endl;
+        if (discriminant < 0)
+        {
+            std::cout << "Discriminant is strictly negative, the two complex solutions are" << std::endl;
+            auto a = equation.getValueByOrder(2);
+            auto b = equation.getValueByOrder(1);
+            std::cout << "(" << -b << " - i * √" << -discriminant << ") / " << 2 * a << std::endl;
+            std::cout << "(" << -b << " + i * √" << -discriminant << ") / " << 2 * a << std::endl;
+        } else if (discriminant == 0){
+            std::cout << "Discriminant is null, the solution is:" << std::endl;
+            std::cout << equation.resolveEquation(discriminant).first << std::endl;
+        } else {
+            std::cout << "Discriminant is strictly positive, the two solutions are:" << std::endl;
+            auto result = equation.resolveEquation(discriminant);
+            std::cout << result.first << std::endl;
+            std::cout << result.second << std::endl;
+        }
     }
 
-    plotGraph(equation);
+    // plotGraph(equation);
 
     return 0;
 }

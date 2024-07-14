@@ -54,14 +54,13 @@ void Polynom::printPolynom() const
 	}	
 }
 
-bool compareByOrder(const Monom& p1, const Monom& p2) 
-{ 
-    return p1.getOrder() < p2.getOrder(); 
-} 
-
 void Polynom::sortPolynom()
 {
-	std::sort(m_vecMonoms.begin(), m_vecMonoms.end(), compareByOrder); 
+	std::sort(m_vecMonoms.begin(), m_vecMonoms.end(), 
+		[](const Monom& p1, const Monom& p2) {
+            return (p1.getOrder() > p2.getOrder());
+        }
+	); 
 };
 
 int Polynom::findByOrder(std::size_t target) const
@@ -134,27 +133,21 @@ std::tuple<double, double, double> Polynom::getCoefficient() const {
 		exit(1);
 	}
 
-	double a = 0, b = 0, c = 0;
+	double a = getValueByOrder(2);
+	double b = getValueByOrder(1);
+	double c = getValueByOrder(0);
 
-	int idx = findByOrder(2);
-	if (idx == -1){
-		std::cerr << __FUNCTION__ << ": " << "This isn't a second degree polynom" << std::endl;
-		exit(1);
-	}
-	a = m_vecMonoms[idx].getValue();
-	
-	idx = findByOrder(1);
-	if (idx == -1)
-		b = 0;
-	else
-		b = m_vecMonoms[idx].getValue();
-
-	idx = findByOrder(0);
-	if (idx == -1)
-		c = 0;
-	else
-		c = m_vecMonoms[idx].getValue();
 	return {a, b, c};
+}
+
+double Polynom::getValueByOrder(int order) const {
+	int idx = findByOrder(order);
+	double result = 0;
+	if (idx == -1)
+		result = 0;
+	else
+		result = m_vecMonoms[idx].getValue();
+	return result;
 }
 
 double Polynom::computeDiscriminant() const

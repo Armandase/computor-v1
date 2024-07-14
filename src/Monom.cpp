@@ -165,3 +165,8 @@ std::size_t	Monom::getOrder() const
 double		Monom::getValue() const
 { return (m_value); }
 
+void	Monom::setVariable(std::string& newVar){
+	m_variable = newVar;
+}
+
+

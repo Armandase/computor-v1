@@ -11,3 +11,7 @@ input: 3*X^1
 - x variable name to name
 - v les doubles
 - v gerer ca: X4
+- v gerer ca: 5*1X^2
+
+- mettre valeur par default a X
+- gérer les complexes

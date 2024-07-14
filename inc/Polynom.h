@@ -30,6 +30,7 @@ class Polynom
 		double computeY(double x);
 
 		std::size_t getMaxOrder() const;
+		double getValueByOrder(int order) const;
 		std::tuple<double, double, double> getCoefficient() const;
 
 		std::vector<Monom> getVecMonoms() const;

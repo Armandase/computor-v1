@@ -22,6 +22,8 @@ class Monom
 		std::string	getVariable() const;
 		std::size_t	getOrder() const;
 		double		getValue() const;
+		void	setVariable(std::string& newVar);
+
 
 		void parseMonom(const std::string& input, char sign);
 		std::string monomAsString() const;
