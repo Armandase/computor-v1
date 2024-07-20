@@ -26,10 +26,12 @@ void Polynom::parsePolynom(std::string variable)
 {
 	int size = m_vecMonoms.size();
 	std::cout << "\nvarialvbe: " << variable << std::endl;
-	for (int i = 0; i < size; i++){
-		if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] != 0){
-			variable = m_vecMonoms[i].getVariable();
-			break;
+	if (variable.empty()){
+		for (int i = 0; i < size; i++){
+			if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] != 0){
+				variable = m_vecMonoms[i].getVariable();
+				break;
+			}
 		}
 	}
 	std::cout << "varialvbe 1: " << variable << std::endl;
