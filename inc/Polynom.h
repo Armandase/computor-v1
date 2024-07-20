@@ -6,6 +6,7 @@
 # include <algorithm>
 # include <cmath>
 # include "Monom.h"
+# define DEFAULT_VARIABLE "X"
 
 class Monom;
 
@@ -17,12 +18,12 @@ class Polynom
 		Polynom (const Polynom &copy);
 		Polynom &operator=(const Polynom&);
 
-		void parsePolynom();
+		void parsePolynom(std::string variable = "");
 		void addMonom(const Monom& monom);
 		void printPolynom() const;
 		void sortPolynom();
 		int	 findByOrder(std::size_t target) const;
-		void toNull(const Polynom& toNull);
+		void toNull(Polynom& toNull);
 		void cleanVecMonom();
 
 		double computeDiscriminant() const;

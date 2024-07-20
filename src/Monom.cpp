@@ -3,13 +3,13 @@
 Monom::Monom(){
 	m_order = 0;
     m_value = 0;
-	m_variable = "";
+	m_variable = std::string();
 }
 
 Monom::Monom(const std::string& input, char sign){
 	m_order = 0;
     m_value = 0;
-	m_variable = "";
+	m_variable = std::string();
 	parseMonom(input, sign);
 }
 
@@ -109,7 +109,7 @@ void Monom::parseMonom(const std::string& input, char sign)
 
 	// if the exponential isn't set, set to 1 as default
 	if(expIndex == -1)
-		m_order = 1;
+		m_order = 0;
 	// if the value isn't set, set to 1 as default
 	if (valueIndex == -1)
 		m_value = 1;

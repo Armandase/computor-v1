@@ -13,5 +13,6 @@ input: 3*X^1
 - v gerer ca: X4
 - v gerer ca: 5*1X^2
 
-- mettre valeur par default a X
-- gérer les complexes
+- v gérer les complexes
+- v mettre valeur par default a X
+- "3*X^2+5*X^1+7 ="

@@ -22,20 +22,37 @@ Polynom & Polynom::operator=(const Polynom &copy){
 	return (*this);
 }
 
-void Polynom::parsePolynom()
+void Polynom::parsePolynom(std::string variable)
 {
-	std::string variable;
 	int size = m_vecMonoms.size();
-
+	std::cout << "\nvarialvbe: " << variable << std::endl;
 	for (int i = 0; i < size; i++){
-		if (i == 0)
+		if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] != 0){
 			variable = m_vecMonoms[i].getVariable();
-		if (variable != m_vecMonoms[i].getVariable())
-		{
-			std::cerr << __FUNCTION__ << ": " << "Different variable inside a polynom" << std::endl;
-			exit(1);
+			break;
 		}
 	}
+	std::cout << "varialvbe 1: " << variable << std::endl;
+
+	if (variable.empty()){
+		std::string variable = DEFAULT_VARIABLE;
+		for (int i = 0; i < size; i++)
+			m_vecMonoms[i].setVariable(variable);
+
+	} else {
+		for (int i = 0; i < size; i++){
+			if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] == 0)
+				m_vecMonoms[i].setVariable(variable);
+			
+			std::cout << "m_vecMonoms[i].getVariable(): " << m_vecMonoms[i].getVariable() << std::endl;
+			std::cout << "Variable(): " << variable << std::endl;
+			if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] != 0 && m_vecMonoms[i].getVariable() != variable){
+				std::cerr << __FUNCTION__ << ": " << "error variable mismatch" << std::endl;
+				exit(1);
+			}
+		}
+	}
+	printPolynom();
 }
 
 
@@ -74,8 +91,12 @@ int Polynom::findByOrder(std::size_t target) const
 	return -1;
 }
 
-void Polynom::toNull(const Polynom& toNull)
+void Polynom::toNull(Polynom& toNull)
 {
+	// check if they have the same variable
+	std::cout << "var send" << m_vecMonoms.begin()->getVariable() << std::endl;
+	toNull.parsePolynom(m_vecMonoms.begin()->getVariable());
+
 	int size = toNull.getVecMonoms().size();
 	int idx = 0;
 	for (int i = 0; i < size; i++)
