@@ -93,6 +93,7 @@ void Monom::operator-=(const Monom& sub){
 void Monom::parseMonom(const std::string& input, char sign)
 {
 	bool inputDouble = false;
+	bool defaultOrder = false;
 	char varName = findVariableName(input);
 
 	// if the variable name is undefine, it's set to the default one ('x')
@@ -107,9 +108,11 @@ void Monom::parseMonom(const std::string& input, char sign)
 	int valueIndex = findUniqueOf(input, '*');
 	int expIndex = findUniqueOf(input, '^');
 
-	// if the exponential isn't set, set to 1 as default
-	if(expIndex == -1)
+	// if the exponential isn't set, set to 0 as default
+	if(expIndex == -1){
 		m_order = 0;
+		defaultOrder = true;
+	}
 	// if the value isn't set, set to 1 as default
 	if (valueIndex == -1)
 		m_value = 1;
@@ -140,7 +143,7 @@ void Monom::parseMonom(const std::string& input, char sign)
 	else {
 		if (!m_value)
 			m_value = convertStringToDouble(value);
-		if (!m_order)
+		if (!m_order && !defaultOrder)
 			m_order = convertStringToInt(order);
 	}
 
@@ -168,5 +171,11 @@ double		Monom::getValue() const
 void	Monom::setVariable(std::string& newVar){
 	m_variable = newVar;
 }
+
+void	Monom::setValue(double newValue){
+	m_value = newValue;
+	
+}
+
 
 

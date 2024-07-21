@@ -22,6 +22,7 @@ class Monom
 		std::string	getVariable() const;
 		std::size_t	getOrder() const;
 		double		getValue() const;
+		void	setValue(double newValue);
 		void	setVariable(std::string& newVar);
 
 

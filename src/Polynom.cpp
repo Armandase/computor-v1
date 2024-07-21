@@ -25,7 +25,6 @@ Polynom & Polynom::operator=(const Polynom &copy){
 void Polynom::parsePolynom(std::string variable)
 {
 	int size = m_vecMonoms.size();
-	std::cout << "\nvarialvbe: " << variable << std::endl;
 	if (variable.empty()){
 		for (int i = 0; i < size; i++){
 			if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] != 0){
@@ -34,8 +33,6 @@ void Polynom::parsePolynom(std::string variable)
 			}
 		}
 	}
-	std::cout << "varialvbe 1: " << variable << std::endl;
-
 	if (variable.empty()){
 		std::string variable = DEFAULT_VARIABLE;
 		for (int i = 0; i < size; i++)
@@ -46,15 +43,12 @@ void Polynom::parsePolynom(std::string variable)
 			if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] == 0)
 				m_vecMonoms[i].setVariable(variable);
 			
-			std::cout << "m_vecMonoms[i].getVariable(): " << m_vecMonoms[i].getVariable() << std::endl;
-			std::cout << "Variable(): " << variable << std::endl;
 			if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] != 0 && m_vecMonoms[i].getVariable() != variable){
 				std::cerr << __FUNCTION__ << ": " << "error variable mismatch" << std::endl;
 				exit(1);
 			}
 		}
 	}
-	printPolynom();
 }
 
 
@@ -96,7 +90,6 @@ int Polynom::findByOrder(std::size_t target) const
 void Polynom::toNull(Polynom& toNull)
 {
 	// check if they have the same variable
-	std::cout << "var send" << m_vecMonoms.begin()->getVariable() << std::endl;
 	toNull.parsePolynom(m_vecMonoms.begin()->getVariable());
 
 	int size = toNull.getVecMonoms().size();
@@ -208,4 +201,23 @@ double Polynom::computeY(double x){
 		sum += m_vecMonoms[i].getValue() * (std::pow(x, m_vecMonoms[i].getOrder()));
 	}
 	return sum;
+}
+
+void Polynom::irreducibleForm(){
+	std::vector<int> coefficients(this->m_vecMonoms.size());
+
+	for (auto& monom: this->m_vecMonoms)
+		coefficients.push_back(monom.getValue());
+	
+	int gcd = gcd_of_n(coefficients);
+
+	if (gcd <= 1)
+	{
+		std::cout << __FUNCTION__ << ": " << "no need to simplify" << std::endl;
+		return;
+	}
+
+	for (auto& monom: this->m_vecMonoms)
+		monom.setValue(monom.getValue() / gcd);
+	std::cout << __FUNCTION__ << ": " << "each coefficient has been divided by " << gcd << std::endl;
 }

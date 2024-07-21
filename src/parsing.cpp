@@ -22,6 +22,11 @@ Polynom handleInput(std::string& input)
     int equal = foundOccurenceOf(input, '=');
     std::string left(input.substr(0, equal));
     std::string right(input.substr(equal + 1));
+    if (left.empty() || right.empty())
+    {
+        std::cerr << "Wrong polynom: missing a part in the formula" << std::endl;
+        exit(1);
+    }
 
     Polynom leftPart = getMonomFromString(left);
     Polynom rightPart = getMonomFromString(right);

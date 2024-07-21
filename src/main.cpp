@@ -1,5 +1,6 @@
 #include "../inc/parsing.h"
 #include "../inc/matplotlibcpp.h"
+#include "../inc/utils.h" 
 #include <iostream>
 
 namespace plt = matplotlibcpp;
@@ -74,6 +75,8 @@ int main(int ac, char** av)
         }
     }
 
+    equation.irreducibleForm();
+    equation.printPolynom();
     // plotGraph(equation);
 
     return 0;
