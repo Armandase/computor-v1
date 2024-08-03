@@ -4,10 +4,10 @@ int findUniqueOf(const std::string& str, char target)
 {
 	auto index = str.find_first_of(target);
 	
-	if (str.find_last_of(target) != index || index == std::string::npos)
-	{
-		return (-1); 
-	}
+	if (str.find_last_of(target) != index)
+		return (MULTIPLE_DEFINITION);
+	if (index == std::string::npos)
+		return (NOT_FOUND); 
 
 	return (index);
 }
@@ -33,7 +33,6 @@ char	findVariableName(const std::string& str)
 int convertStringToInt(const std::string& str)
 {
 	int result = 0;
-
 	for (std::size_t i = 0; i < str.size(); i++)
 	{
 		if (!std::isdigit(str[i]))

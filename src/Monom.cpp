@@ -92,15 +92,17 @@ void Monom::operator-=(const Monom& sub){
 
 void Monom::parseMonom(const std::string& input, char sign)
 {
-	bool inputDouble = false;
-	bool defaultOrder = false;
+	// bool inputDouble = false;
+	bool defaultExp = false;
+	bool defaultVariable = false;
+	bool defaultValue = false;
 	char varName = findVariableName(input);
 
 	// if the variable name is undefine, it's set to the default one ('x')
 	if (varName == 0)
 	{
 		varName = m_variable[0];
-		inputDouble = true;
+		defaultVariable = true;
 	}
 
 	// find the index of the variable, the value & the expenontial
@@ -108,46 +110,88 @@ void Monom::parseMonom(const std::string& input, char sign)
 	int valueIndex = findUniqueOf(input, '*');
 	int expIndex = findUniqueOf(input, '^');
 
+	if (varIndex == MULTIPLE_DEFINITION )
+	{
+		std::cerr << __FUNCTION__ << ": " << " variable name can be just a single char.\n";
+		std::cout << "error comes from this monom" << input  << std::endl;
+		exit (1);
+	}
+	if (valueIndex == MULTIPLE_DEFINITION )
+	{
+		std::cerr << __FUNCTION__ << ": " << " too many '*' in this monom: " << input << std::endl;
+		exit(1);
+	}
+	if (expIndex == MULTIPLE_DEFINITION)
+	{
+		std::cerr << __FUNCTION__ << ": " << " too many '^' in this monom: " << input << std::endl;;
+		exit(1);
+	}
+	if (valueIndex != NOT_FOUND && varIndex == NOT_FOUND && expIndex == NOT_FOUND)
+	{
+		std::cerr << __FUNCTION__ << ": " << " nothing comes with '*' in this monom: " << input << std::endl;
+		exit(1);
+	}
+
 	// if the exponential isn't set, set to 0 as default
-	if(expIndex == -1){
+	if(expIndex == NOT_FOUND){
 		m_order = 0;
-		defaultOrder = true;
+		defaultExp = true;
 	}
 	// if the value isn't set, set to 1 as default
-	if (valueIndex == -1)
+	if (valueIndex == NOT_FOUND)
+	{
 		m_value = 1;
-
-	m_variable = std::string(1, varName);
+		defaultValue = true;
+	}
+    (void)defaultValue;	
+	if (!defaultVariable)
+		m_variable = std::string(1, varName);
 	// check if the '^' is before the 'x' 
 	// check also if the number is after the '^' 
-	if ((expIndex <= varIndex || valueIndex > expIndex) && valueIndex != -1 && expIndex != -1)
+	if (valueIndex != NOT_FOUND && expIndex != NOT_FOUND
+		&& (expIndex <= varIndex || valueIndex > expIndex))
 	{
 		std::cerr << __FUNCTION__ << ": " << "wrong placement of an exponential." << std::endl;
 		exit(1);
 	}
 
-	std::string value = input.substr(0, valueIndex);
-	std::string order = input.substr(expIndex + 1);
-	
 	// if exponential & value aren't set and the input doesn't contains variable name 
-	if (expIndex == -1 && valueIndex == -1 && inputDouble)
+	if (expIndex == NOT_FOUND && valueIndex == NOT_FOUND && defaultVariable)
 		m_value = convertStringToDouble(input);
 	// if exponential & value aren't set and the input contains a variable.
 	// it remove the variable and process it to convert the string to a double 
-	else if (expIndex == -1 && valueIndex == -1 && !inputDouble && input.size() > 1)
+	else if (expIndex == NOT_FOUND && valueIndex == NOT_FOUND && input.size() > 1)
 	{
 		auto withoutVariable = input;
 		withoutVariable.erase(varIndex, varIndex + 1);
 		m_value = convertStringToDouble(withoutVariable);
 	}
 	else {
-		if (!m_value)
-			m_value = convertStringToDouble(value);
-		if (!m_order && !defaultOrder)
-			m_order = convertStringToInt(order);
+		if (valueIndex != NOT_FOUND )
+		{
+			std::string value = input.substr(0, valueIndex);
+			if (valueIndex != NOT_FOUND && value.size() == 0)
+			{
+				std::cerr << __FUNCTION__ << ": " << "value is empty in this monom: " << input << std::endl;
+				exit(1);
+			}
+			if (!m_value)
+				m_value = convertStringToDouble(value);
+		}
+		if (expIndex != NOT_FOUND)
+		{
+			std::string order = input.substr(expIndex + 1);
+			if (expIndex != NOT_FOUND && order.size() == 0)
+			{
+				std::cerr << __FUNCTION__ << ": " << "exponential is empty in this monom: " << input << std::endl;
+				exit(1);
+			}
+			if (!m_order && !defaultExp)
+				m_order = convertStringToInt(order);
+		}
 	}
 
-
+	
 	if (sign == '-')
 		m_value *= -1;
 }

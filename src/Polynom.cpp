@@ -213,11 +213,13 @@ void Polynom::irreducibleForm(){
 
 	if (gcd <= 1)
 	{
-		std::cout << __FUNCTION__ << ": " << "no need to simplify" << std::endl;
+		std::cout << "This polynom can't be simplified." << std::endl;
 		return;
 	}
 
 	for (auto& monom: this->m_vecMonoms)
 		monom.setValue(monom.getValue() / gcd);
 	std::cout << __FUNCTION__ << ": " << "each coefficient has been divided by " << gcd << std::endl;
+	std::cout << "The reduced polynom is: ";
+	this->printPolynom();
 }

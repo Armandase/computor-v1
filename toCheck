@@ -16,3 +16,6 @@ input: 3*X^1
 - v gérer les complexes
 - v mettre valeur par default a X
 - "3*X^2+5*X^1+7 ="
+
+reverifier parse monom possible avec deux split et des templates de forme attendu
+"3*X^2+5*X^1+7 = 1000X^2"

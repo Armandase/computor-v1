@@ -41,10 +41,12 @@ int main(int ac, char** av)
     std::cout << "Reduced form: ";
     equation.printPolynom();
     std::cout << " = 0\n";
+    equation.irreducibleForm();
     std::cout <<  "Polynomial degree: " << maxOrder << std::endl;
     if (maxOrder > 2)
     {
         std::cout << "The polynomial degree is strictly greater than 2, I can't solve." << std::endl;
+        return (0);
     }
 
     if (maxOrder == 1){
@@ -75,8 +77,6 @@ int main(int ac, char** av)
         }
     }
 
-    equation.irreducibleForm();
-    equation.printPolynom();
     // plotGraph(equation);
 
     return 0;
