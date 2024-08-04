@@ -99,7 +99,7 @@ void Polynom::toNull(Polynom& toNull)
 		idx = findByOrder(toNull.getVecMonoms()[i].getOrder());
 		if (idx == -1)
 		{
-			std::cerr << __FUNCTION__ << ": " << "miss matching monom between right and left parts" << std::endl;
+			std::cerr << __FUNCTION__ << ": " << "miss matching order between left and right parts" << std::endl;
 			exit(1);
 		}
 		

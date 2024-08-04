@@ -167,7 +167,7 @@ void Monom::parseMonom(const std::string& input, char sign)
 		m_value = convertStringToDouble(withoutVariable);
 	}
 	else {
-		if (valueIndex != NOT_FOUND )
+		if ( valueIndex != NOT_FOUND )
 		{
 			std::string value = input.substr(0, valueIndex);
 			if (valueIndex != NOT_FOUND && value.size() == 0)
@@ -177,6 +177,20 @@ void Monom::parseMonom(const std::string& input, char sign)
 			}
 			if (!m_value)
 				m_value = convertStringToDouble(value);
+		}else if (valueIndex == NOT_FOUND && expIndex != NOT_FOUND){
+			std::string value;
+			if (!defaultVariable)
+			{
+				value = input.substr(expIndex + 1, input.size() - 1);
+			}
+			else
+			{
+				value = input.substr(0, expIndex);
+				auto idx = value.find_first_of(m_variable);
+				value.erase(value.begin() + idx, value.begin() + idx + 1);
+			}
+			
+			m_value = convertStringToDouble(value);
 		}
 		if (expIndex != NOT_FOUND)
 		{
@@ -186,12 +200,12 @@ void Monom::parseMonom(const std::string& input, char sign)
 				std::cerr << __FUNCTION__ << ": " << "exponential is empty in this monom: " << input << std::endl;
 				exit(1);
 			}
-			if (!m_order && !defaultExp)
+			if (!m_order && !defaultExp){
 				m_order = convertStringToInt(order);
+			}
 		}
 	}
 
-	
 	if (sign == '-')
 		m_value *= -1;
 }

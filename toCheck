@@ -19,3 +19,4 @@ input: 3*X^1
 
 reverifier parse monom possible avec deux split et des templates de forme attendu
 "3*X^2+5*X^1+7 = 1000X^2"
+3*X^2+5*X^1+7 = X^55
