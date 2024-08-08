@@ -23,8 +23,7 @@ char	findVariableName(const std::string& str)
 			varName = str[i];
 		else if (std::isalpha(str[i]))
 		{
-			std::cerr << __FUNCTION__ << ": " << "Multiple variable declaration in a monom." << std::endl;
-			exit(1);
+			throw std::runtime_error(std::string(__FUNCTION__) + ": " + "Multiple variable declaration in a monom.");
 		}
 	}
 	return (varName);
@@ -37,19 +36,16 @@ int convertStringToInt(const std::string& str)
 	{
 		if (!std::isdigit(str[i]))
 		{
-			std::cerr << __FUNCTION__ << ": " << "another char in the exponential section." << std::endl;
-			exit(1);
+			throw std::runtime_error(std::string(__FUNCTION__) + ": " + "another char in the exponential section.");
 		}
 	}
 
 	try {
 		result = std::stoi(str);
 	} catch (std::invalid_argument &e) {
-		std::cerr << __FUNCTION__ << ": " << "stoi invalid argument" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + "stoi invalid argument");
 	} catch (std::exception &e) {
-		std::cerr << __FUNCTION__ << ": " << " exception throw from " << e.what() << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + "stoi exception");
 	}
 	return (result);
 }
@@ -63,15 +59,13 @@ double convertStringToDouble(const std::string& str)
 	{
 		if (!std::isdigit(str[i]) && str[i] != '.')
 		{
-			std::cerr << __FUNCTION__ << ": " << "another char in the exponential section." << std::endl;
-			exit(1);
+			throw std::runtime_error(std::string(__FUNCTION__) + ": " + "another char in the exponential section.");
 		}
 		if (str[i] == '.')
 		{
 			if (dot)
 			{
-				std::cerr << __FUNCTION__ << ": " << "multiple dots in the value section." << std::endl;
-				exit(1);
+				std::runtime_error(std::string(__FUNCTION__) + ": " + "multiple dots in the value section.");
 			}
 			dot = true;
 		}
@@ -80,11 +74,9 @@ double convertStringToDouble(const std::string& str)
 	try {
 		result = std::stod(str);
 	} catch (std::invalid_argument &e) {
-		std::cerr << __FUNCTION__ << ": " << "stod invalid argument" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + "stod invalid argument");
 	} catch (std::exception &e) {
-		std::cerr << __FUNCTION__ << ": " << " exception throw from " << e.what() << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + "stod exception");
 	}
 	return (result);
 }

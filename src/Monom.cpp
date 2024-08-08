@@ -36,13 +36,11 @@ Monom & Monom::operator=(const Monom &copy){
 Monom Monom::operator+(const Monom& add){
 	if (add.getOrder() != this->m_order)
 	{
-		std::cerr << __FUNCTION__ << ": " << " error monom addition between different order" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " error monom addition between different order");
 	}
 	if (add.getVariable() != this->m_variable)
 	{
-		std::cerr << __FUNCTION__ << ": " << " error monom addition between different variable" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " error monom addition between different variable");
 	}
 	return (Monom(m_variable, m_order, m_value + add.getValue()));
 }
@@ -50,13 +48,11 @@ Monom Monom::operator+(const Monom& add){
 Monom Monom::operator-(const Monom& sub){
 	if (sub.getOrder() != this->m_order)
 	{
-		std::cerr << __FUNCTION__ << ": " << " error monom substraction between different order" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " error monom substraction between different order");
 	}
 	if (sub.getVariable() != this->m_variable)
 	{
-		std::cerr << __FUNCTION__ << ": " << " error monom substraction between different variable" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " error monom substraction between different variable");
 	}
 	return (Monom(m_variable, m_order, m_value - sub.getValue()));
 }
@@ -64,13 +60,11 @@ Monom Monom::operator-(const Monom& sub){
 void Monom::operator+=(const Monom& add){
 	if (add.getOrder() != this->m_order)
 	{
-		std::cerr << __FUNCTION__ << ": " << " error monom assignement addition between different order" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " error monom assignement addition between different order");
 	}
 	if (add.getVariable() != this->m_variable)
 	{
-		std::cerr << __FUNCTION__ << ": " << " error monom assignement addition between different variable" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " error monom assignement addition between different variable");
 	}
 	m_value += add.getValue();
 }
@@ -78,24 +72,93 @@ void Monom::operator+=(const Monom& add){
 void Monom::operator-=(const Monom& sub){
 	if (sub.getOrder() != this->m_order)
 	{
-		std::cerr << __FUNCTION__ << ": " << " error monom  assignement substraction between different order" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " error monom assignement substraction between different order");
 	}
 	if (sub.getVariable() != this->m_variable && !sub.getVariable().size() && !m_variable.size())
 	{
-		std::cerr << __FUNCTION__ << ": " << " error monom assignement substraction between different variable" << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " error monom assignement substraction between different variable");
 	}
 	m_value -= sub.getValue();
 }
 
+void Monom::extractValue(const std::string& input)
+{
+	int valueIndex = findUniqueOf(input, '*');
+	if (valueIndex == MULTIPLE_DEFINITION )
+	{
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " too many '*' in this monom: " + input);
+	}
+
+	// index of m_variable in the input
+	int varIndex = findUniqueOf(input, m_variable[0]);
+
+	// handle 222X^2
+	if (valueIndex == NOT_FOUND && varIndex != NOT_FOUND && input.substr(0, varIndex).size() > 0)
+	{
+		m_value = convertStringToDouble(input.substr(0, varIndex));
+	}
+	//handle 222
+	else if (valueIndex == NOT_FOUND && varIndex == NOT_FOUND)
+	{
+		m_value = convertStringToDouble(input);
+	}
+	// handle X^2
+	else if (valueIndex == NOT_FOUND)
+	{
+		m_value = 1;
+	} else if (valueIndex != NOT_FOUND){
+		auto valueString = input.substr(0, valueIndex);
+		if (valueString.size() == 0)
+		{
+			throw std::runtime_error(std::string(__FUNCTION__) + ": " + "value is empty in this monom: " + input);
+		}
+		
+		m_value = convertStringToDouble(valueString);
+	} else{
+		std::cerr << std::string(__FUNCTION__) << ": " << "error in the value extraction" << std::endl;
+	}
+}
+
+void Monom::extractOrder(const std::string& input)
+{
+	int expIndex = findUniqueOf(input, '^');
+	if (expIndex == MULTIPLE_DEFINITION)
+	{
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " too many '^' in this monom: " + input);
+	}
+
+	int varIndex = findUniqueOf(input, m_variable[0]);
+	if (varIndex == MULTIPLE_DEFINITION)
+	{
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " variable name can be just a single char.");
+	} else if (varIndex == NOT_FOUND && expIndex != NOT_FOUND)
+	{
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " variable name is missing in this monom: " + input);
+	}
+
+	if (expIndex == NOT_FOUND && varIndex == NOT_FOUND)
+	{
+		m_order = 0;
+	}
+	else if (expIndex == NOT_FOUND && varIndex != NOT_FOUND)
+	{
+		m_order = 1;
+	} 
+	else if (expIndex != NOT_FOUND){
+		auto orderString = input.substr(expIndex + 1);
+		if (orderString.size() == 0)
+		{
+			throw std::runtime_error(std::string(__FUNCTION__) + ": " + "exponential is empty in this monom: " + input);
+		}
+		m_order = convertStringToInt(orderString);
+	} else{
+		std::cerr << std::string(__FUNCTION__) << ": " << "error in the order extraction" << std::endl;
+	}
+}
 
 void Monom::parseMonom(const std::string& input, char sign)
 {
-	// bool inputDouble = false;
-	bool defaultExp = false;
 	bool defaultVariable = false;
-	bool defaultValue = false;
 	char varName = findVariableName(input);
 
 	// if the variable name is undefine, it's set to the default one ('x')
@@ -107,104 +170,16 @@ void Monom::parseMonom(const std::string& input, char sign)
 
 	// find the index of the variable, the value & the expenontial
 	int varIndex = findUniqueOf(input, varName);
-	int valueIndex = findUniqueOf(input, '*');
-	int expIndex = findUniqueOf(input, '^');
 
 	if (varIndex == MULTIPLE_DEFINITION )
 	{
-		std::cerr << __FUNCTION__ << ": " << " variable name can be just a single char.\n";
-		std::cout << "error comes from this monom" << input  << std::endl;
-		exit (1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " variable name can be just a single char.");
 	}
-	if (valueIndex == MULTIPLE_DEFINITION )
-	{
-		std::cerr << __FUNCTION__ << ": " << " too many '*' in this monom: " << input << std::endl;
-		exit(1);
-	}
-	if (expIndex == MULTIPLE_DEFINITION)
-	{
-		std::cerr << __FUNCTION__ << ": " << " too many '^' in this monom: " << input << std::endl;;
-		exit(1);
-	}
-	if (valueIndex != NOT_FOUND && varIndex == NOT_FOUND && expIndex == NOT_FOUND)
-	{
-		std::cerr << __FUNCTION__ << ": " << " nothing comes with '*' in this monom: " << input << std::endl;
-		exit(1);
-	}
-
-	// if the exponential isn't set, set to 0 as default
-	if(expIndex == NOT_FOUND){
-		m_order = 0;
-		defaultExp = true;
-	}
-	// if the value isn't set, set to 1 as default
-	if (valueIndex == NOT_FOUND)
-	{
-		m_value = 1;
-		defaultValue = true;
-	}
-    (void)defaultValue;	
 	if (!defaultVariable)
 		m_variable = std::string(1, varName);
-	// check if the '^' is before the 'x' 
-	// check also if the number is after the '^' 
-	if (valueIndex != NOT_FOUND && expIndex != NOT_FOUND
-		&& (expIndex <= varIndex || valueIndex > expIndex))
-	{
-		std::cerr << __FUNCTION__ << ": " << "wrong placement of an exponential." << std::endl;
-		exit(1);
-	}
-
-	// if exponential & value aren't set and the input doesn't contains variable name 
-	if (expIndex == NOT_FOUND && valueIndex == NOT_FOUND && defaultVariable)
-		m_value = convertStringToDouble(input);
-	// if exponential & value aren't set and the input contains a variable.
-	// it remove the variable and process it to convert the string to a double 
-	else if (expIndex == NOT_FOUND && valueIndex == NOT_FOUND && input.size() > 1)
-	{
-		auto withoutVariable = input;
-		withoutVariable.erase(varIndex, varIndex + 1);
-		m_value = convertStringToDouble(withoutVariable);
-	}
-	else {
-		if ( valueIndex != NOT_FOUND )
-		{
-			std::string value = input.substr(0, valueIndex);
-			if (valueIndex != NOT_FOUND && value.size() == 0)
-			{
-				std::cerr << __FUNCTION__ << ": " << "value is empty in this monom: " << input << std::endl;
-				exit(1);
-			}
-			if (!m_value)
-				m_value = convertStringToDouble(value);
-		}else if (valueIndex == NOT_FOUND && expIndex != NOT_FOUND){
-			std::string value;
-			if (!defaultVariable)
-			{
-				value = input.substr(expIndex + 1, input.size() - 1);
-			}
-			else
-			{
-				value = input.substr(0, expIndex);
-				auto idx = value.find_first_of(m_variable);
-				value.erase(value.begin() + idx, value.begin() + idx + 1);
-			}
-			
-			m_value = convertStringToDouble(value);
-		}
-		if (expIndex != NOT_FOUND)
-		{
-			std::string order = input.substr(expIndex + 1);
-			if (expIndex != NOT_FOUND && order.size() == 0)
-			{
-				std::cerr << __FUNCTION__ << ": " << "exponential is empty in this monom: " << input << std::endl;
-				exit(1);
-			}
-			if (!m_order && !defaultExp){
-				m_order = convertStringToInt(order);
-			}
-		}
-	}
+	
+	extractValue(input);
+	extractOrder(input);
 
 	if (sign == '-')
 		m_value *= -1;

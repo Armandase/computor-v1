@@ -44,8 +44,7 @@ void Polynom::parsePolynom(std::string variable)
 				m_vecMonoms[i].setVariable(variable);
 			
 			if (m_vecMonoms[i].getVariable().size() == 1 && m_vecMonoms[i].getVariable()[0] != 0 && m_vecMonoms[i].getVariable() != variable){
-				std::cerr << __FUNCTION__ << ": " << "error variable mismatch" << std::endl;
-				exit(1);
+				throw std::runtime_error(std::string(__FUNCTION__) + ": " + "error variable mismatch");
 			}
 		}
 	}
@@ -99,8 +98,7 @@ void Polynom::toNull(Polynom& toNull)
 		idx = findByOrder(toNull.getVecMonoms()[i].getOrder());
 		if (idx == -1)
 		{
-			std::cerr << __FUNCTION__ << ": " << "miss matching order between left and right parts" << std::endl;
-			exit(1);
+			throw std::runtime_error(std::string(__FUNCTION__) + ": " + "miss matching order between left and right parts");
 		}
 		
 		if (toNull.getVecMonoms()[i].getValue() < 0)
@@ -113,14 +111,14 @@ void Polynom::toNull(Polynom& toNull)
 
 void Polynom::cleanVecMonom()
 {
-	std::vector<int> deleteIndexes = {};
+	std::vector<size_t> deleteIndexes = {};
 	for (size_t i = 0; i < this->m_vecMonoms.size(); i++)
 	{
 		if (m_vecMonoms[i].getValue() == 0)
 			deleteIndexes.push_back(i);
 	}
 
-	for (size_t i = deleteIndexes.size(); i > 0; i--)
+	for (int i = deleteIndexes.size() - 1; i >= 0; i--)
 	{
 		auto iterator = m_vecMonoms.begin() + deleteIndexes[i];
 		m_vecMonoms.erase(iterator);
@@ -145,8 +143,7 @@ std::size_t Polynom::getMaxOrder() const{
 
 std::tuple<double, double, double> Polynom::getCoefficient() const {
 	if (getMaxOrder() != 2){
-		std::cerr << __FUNCTION__ << ": " << "Can't compute the discrimiant on a non second degree polynom." << std::endl;
-		exit(1);
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + "Can't compute the discrimiant on a non second degree polynom.");
 	}
 
 	double a = getValueByOrder(2);
@@ -219,7 +216,7 @@ void Polynom::irreducibleForm(){
 
 	for (auto& monom: this->m_vecMonoms)
 		monom.setValue(monom.getValue() / gcd);
-	std::cout << __FUNCTION__ << ": " << "each coefficient has been divided by " << gcd << std::endl;
+	std::cout << std::string(__FUNCTION__) << ": " << "each coefficient has been divided by " << gcd << std::endl;
 	std::cout << "The reduced polynom is: ";
 	this->printPolynom();
 }

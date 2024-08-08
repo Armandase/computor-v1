@@ -24,8 +24,7 @@ Polynom handleInput(std::string& input)
     std::string right(input.substr(equal + 1));
     if (left.empty() || right.empty())
     {
-        std::cerr << "Wrong polynom: missing a part in the formula" << std::endl;
-        exit(1);
+        throw std::runtime_error("Wrong polynom: missing a part in the formula");
     }
 
     Polynom leftPart = getMonomFromString(left);
@@ -51,8 +50,7 @@ std::vector<std::pair<std::string, char> > getMonoms(std::string input)
         }
         if ((input[i] == '+' || input[i] ==  '-') && lastMonom == i)
         {
-            std::cerr << "getMonoms: too many sign in the formula" << std::endl;
-            exit(1);
+            throw std::runtime_error("getMonoms: too many sign in the formula");
         }
 
         if (i + 1 == size)
@@ -75,14 +73,12 @@ int foundOccurenceOf(const std::string& input, char target)
 
     std::size_t targetIndex = input.find_first_of(target);
     if (targetIndex == std::string::npos){
-        std::cerr << "Wrong polynom: missing '=' in the formula" << std::endl;
-        exit(1);
+        throw std::runtime_error("Wrong polynom: missing '=' in the formula");
     }
 
     if (targetIndex != input.find_last_of(target))
     {
-        std::cerr << "Wrong polynom: multiple equal are found in this polynom" << std::endl;
-        exit(1);
+        throw std::runtime_error("Wrong polynom: multiple equal are found in this polynom");
     }
 
     return targetIndex; 

@@ -27,6 +27,8 @@ class Monom
 
 
 		void parseMonom(const std::string& input, char sign);
+		void extractOrder(const std::string& input);
+		void extractValue(const std::string& input);
 		std::string monomAsString() const;
 	 private:
 	 	std::string m_variable;

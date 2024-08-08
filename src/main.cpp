@@ -23,14 +23,8 @@ void plotGraph(Polynom& equation)
     plt::show();
 }
 
-int main(int ac, char** av)
+static int computor_v1(std::string& input)
 {
-    if (ac != 2 || !av[1]){
-        std::cerr << "Wrong number of agruments." << std::endl;
-        return 1;
-    }
-
-    std::string input = av[1];
     Polynom equation = handleInput(input);
     if (equation.getVecMonoms().empty())
     {
@@ -76,8 +70,28 @@ int main(int ac, char** av)
             std::cout << result.second << std::endl;
         }
     }
-
     // plotGraph(equation);
+    return 0;
+}
 
+int main(int ac, char** av)
+{
+    if (ac != 2 || !av[1]){
+        std::cerr << "Wrong number of agruments." << std::endl;
+        return 1;
+    }
+
+    std::string input(av[1]);
+
+    try
+    {
+        int ret = computor_v1(input);
+        return (ret);
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
     return 0;
 }
