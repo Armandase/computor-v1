@@ -21,6 +21,7 @@ void plotGraph(Polynom& equation)
     plt::xlabel("x");
     plt::ylabel("y");
     plt::show();
+    Py_Finalize();
 }
 
 static int computor_v1(std::string& input)
@@ -70,7 +71,10 @@ static int computor_v1(std::string& input)
             std::cout << result.second << std::endl;
         }
     }
-    // plotGraph(equation);
+    if (ACTIVATE_PLOT == 1)
+        plotGraph(equation);
+    else
+        std::cout << "Plot desactivated." << std::endl;
     return 0;
 }
 

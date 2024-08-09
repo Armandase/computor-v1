@@ -11,7 +11,8 @@ HEADER	=	inc/parsing.h inc/parsing_utils.h \
 			inc/matplotlibcpp.h inc/utils.h
 
 OBJS	=	$(addprefix obj/, $(SRC:.cpp=.o))
-CXXFLAGS=	-Wall -Wextra -Werror --std=c++17 -g -DPLOT -DWITHOUT_NUMPY
+CXXFLAGS=	-Wall -Wextra -Werror --std=c++17 -g \
+			-DPLOT -DWITHOUT_NUMPY -DACTIVATE_PLOT=0
 LDFLAGS	=	-lpython3.10
 
 all		:	${NAME} 
@@ -35,4 +36,4 @@ clean:
 re: fclean
 	@make all
 
-.PHONY: all fclean clean re
+.PHONY: all fclean clean re lib
