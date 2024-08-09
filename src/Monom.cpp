@@ -103,10 +103,21 @@ void Monom::extractValue(const std::string& input)
 		m_value = convertStringToDouble(input);
 	}
 	// handle X^2
+	else if (valueIndex == NOT_FOUND && findUniqueOf(input, '^') > 0)
+	{
+		m_value = 1;
+	}
+	// handle X3 (considered as false)
+	else if (valueIndex == NOT_FOUND && input.size() > 1)
+	{
+		throw std::runtime_error(std::string(__FUNCTION__) + ": " + " wrong placement of a value in this monom" + input);
+	}
+	// handle X
 	else if (valueIndex == NOT_FOUND)
 	{
 		m_value = 1;
-	} else if (valueIndex != NOT_FOUND){
+	}
+	else if (valueIndex != NOT_FOUND){
 		auto valueString = input.substr(0, valueIndex);
 		if (valueString.size() == 0)
 		{
