@@ -33,6 +33,10 @@ static int computor_v1(std::string& input)
         return 1;
     }
     auto maxOrder = equation.getMaxOrder();
+    if (maxOrder == 0){
+        std::cout << "The polynomial degree is 0, there is no possible solution" << std::endl;
+        return (0);
+    }
     std::cout << "Reduced form: ";
     equation.printPolynom();
     std::cout << " = 0\n";
@@ -42,12 +46,14 @@ static int computor_v1(std::string& input)
     {
         std::cout << "The polynomial degree is strictly greater than 2, I can't solve." << std::endl;
         return (0);
-    }
-
-    if (maxOrder == 1){
+    } else if (maxOrder == 1){
         double a = equation.getValueByOrder(1);
         double b = equation.getValueByOrder(0);
 
+        if (a == 0){
+            std::cout << "Division per zero is impossible" << std::endl;
+            return 0;
+        }
         std::cout << "The solution is:" << std::endl;
         std::cout << -b / a << std::endl;
 

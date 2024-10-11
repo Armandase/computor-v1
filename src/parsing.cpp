@@ -17,8 +17,6 @@ Polynom handleInput(std::string& input)
     std::string::iterator end_pos = std::remove(input.begin(), input.end(), ' ');
     input.erase(end_pos, input.end());
 
-    std::cout << input << std::endl;
-
     int equal = foundOccurenceOf(input, '=');
     std::string left(input.substr(0, equal));
     std::string right(input.substr(equal + 1));
@@ -30,7 +28,15 @@ Polynom handleInput(std::string& input)
     Polynom leftPart = getMonomFromString(left);
     Polynom rightPart = getMonomFromString(right);
     
+    if (leftPart.getMaxOrder() > 2 || rightPart.getMaxOrder() > 2)
+        throw std::runtime_error(std::string(__FUNCTION__) + ": " + "The polynomial degree is strictly greater than 2, I can't solve.");
+
     leftPart.toNull(rightPart);
+    //handle the case where there is just X^0 and the values between left and right are the same
+	if (leftPart.getMaxOrder() == 0 && rightPart.getMaxOrder() == 0
+    && rightPart.getVecMonoms().size() == 1 && leftPart.getVecMonoms().size() == 1
+    && leftPart.getVecMonoms().front() == rightPart.getVecMonoms().front())
+        return (Polynom());
     return leftPart;
 }
 

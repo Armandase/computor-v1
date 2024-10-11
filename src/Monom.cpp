@@ -81,6 +81,23 @@ void Monom::operator-=(const Monom& sub){
 	m_value -= sub.getValue();
 }
 
+Monom  Monom::abs() const{
+	std::string varName = this->getVariable();
+	std::size_t order = this->getOrder();
+	double value = std::abs(this->getValue());
+	return Monom(varName, order, value);
+}
+
+bool Monom::operator==(const Monom& check)
+{
+	if (check.getOrder() == this->getOrder() 
+	&& check.getVariable() == this->getVariable()
+	&& check.getValue() == this->getValue() )
+		return true;
+	return false;
+}
+
+
 void Monom::extractValue(const std::string& input)
 {
 	int valueIndex = findUniqueOf(input, '*');

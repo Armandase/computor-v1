@@ -18,7 +18,9 @@ class Monom
 		void operator+=(const Monom&);
 		Monom operator-(const Monom&);
 		void operator-=(const Monom&);
-		
+		bool operator==(const Monom&);
+		Monom  abs() const;
+
 		std::string	getVariable() const;
 		std::size_t	getOrder() const;
 		double		getValue() const;

@@ -5,6 +5,8 @@
 # include <vector>
 # include <algorithm>
 # include <cmath>
+# include <cstdlib>
+# include <tuple>
 # include "Monom.h"
 # include "utils.h"
 # define DEFAULT_VARIABLE "X"

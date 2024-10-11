@@ -88,8 +88,15 @@ int Polynom::findByOrder(std::size_t target) const
 
 void Polynom::toNull(Polynom& toNull)
 {
-	// check if they have the same variable
+	if (toNull.getMaxOrder() > this->getMaxOrder())
+	{
+		auto tmp = *this;
+		*this = toNull;
+		toNull = tmp;
+	}
 	toNull.parsePolynom(m_vecMonoms.begin()->getVariable());
+	if (toNull.getMaxOrder() == 0 && this->getMaxOrder() == 0)
+		return ;
 
 	int size = toNull.getVecMonoms().size();
 	int idx = 0;
@@ -97,16 +104,14 @@ void Polynom::toNull(Polynom& toNull)
 	{
 		idx = findByOrder(toNull.getVecMonoms()[i].getOrder());
 		if (idx == -1)
-		{
 			throw std::runtime_error(std::string(__FUNCTION__) + ": " + "miss matching order between left and right parts");
-		}
 		
 		if (toNull.getVecMonoms()[i].getValue() < 0)
-			this->m_vecMonoms[idx] += toNull.getVecMonoms()[i];			
+			this->m_vecMonoms[idx] += toNull.getVecMonoms()[i].abs();			
 		else
-			this->m_vecMonoms[idx] -= toNull.getVecMonoms()[i];			
+			this->m_vecMonoms[idx] -= toNull.getVecMonoms()[i].abs();
 	}
-	cleanVecMonom();
+	// cleanVecMonom();
 }
 
 void Polynom::cleanVecMonom()
@@ -134,7 +139,7 @@ std::size_t Polynom::getMaxOrder() const{
 	std::size_t max = 0;
 
 	for (auto& monom: m_vecMonoms){
-		if (monom.getOrder() > max){
+		if (monom.getOrder() > max && monom.getValue()){
 			max = monom.getOrder();
 		}
 	}
@@ -219,4 +224,5 @@ void Polynom::irreducibleForm(){
 	std::cout << std::string(__FUNCTION__) << ": " << "each coefficient has been divided by " << gcd << std::endl;
 	std::cout << "The reduced polynom is: ";
 	this->printPolynom();
+	std::cout << std::endl;
 }
