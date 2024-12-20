@@ -25,10 +25,10 @@ Polynom handleInput(std::string &input) {
   Polynom leftPart = getMonomFromString(left);
   Polynom rightPart = getMonomFromString(right);
 
-  if (leftPart.getMaxOrder() > 2 || rightPart.getMaxOrder() > 2)
-    throw std::runtime_error(
-        std::string(__FUNCTION__) + ": " +
-        "The polynomial degree is strictly greater than 2, I can't solve.");
+  // if (leftPart.getMaxOrder() > 2 || rightPart.getMaxOrder() > 2)
+  //   throw std::runtime_error(
+  //       std::string(__FUNCTION__) + ": " +
+  //       "The polynomial degree is strictly greater than 2, I can't solve.");
 
   leftPart.toNull(rightPart);
   // handle the case where there is just X^0 and the values between left and
