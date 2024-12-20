@@ -101,6 +101,14 @@ bool Monom::operator==(const Monom &check) {
   return false;
 }
 
+bool Monom::operator!=(const Monom &check) {
+  if (check.getOrder() != this->getOrder() ||
+      check.getVariable() != this->getVariable() ||
+      check.getValue() != this->getValue())
+    return true;
+  return false;
+}
+
 void Monom::extractValue(const std::string &input) {
   int valueIndex = findUniqueOf(input, '*');
   if (valueIndex == MULTIPLE_DEFINITION) {

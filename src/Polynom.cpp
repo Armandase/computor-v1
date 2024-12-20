@@ -1,10 +1,17 @@
 #include "../inc/Polynom.h"
+#include <unordered_map>
 
-Polynom::Polynom() { m_vecMonoms = {}; }
+Polynom::Polynom() {
+  m_vecMonoms = {};
+  m_defaultVariable = true;
+}
 
 Polynom::Polynom(std::vector<Monom> vecMonoms) {
   m_vecMonoms = vecMonoms;
+  m_defaultVariable = true;
   parsePolynom();
+  sortPolynom();
+  removeEqualMonoms();
 }
 
 Polynom::Polynom(const Polynom &copy) { *this = copy; }
@@ -23,19 +30,21 @@ void Polynom::parsePolynom(std::string variable) {
       if (m_vecMonoms[i].getVariable().size() == 1 &&
           m_vecMonoms[i].getVariable()[0] != 0) {
         variable = m_vecMonoms[i].getVariable();
+        m_defaultVariable = false;
         break;
       }
     }
   }
   if (variable.empty()) {
-    std::string variable = DEFAULT_VARIABLE;
+    variable = DEFAULT_VARIABLE;
     for (int i = 0; i < size; i++)
       m_vecMonoms[i].setVariable(variable);
-
   } else {
+    m_defaultVariable = false;
     for (int i = 0; i < size; i++) {
-      if (m_vecMonoms[i].getVariable().size() == 1 &&
-          m_vecMonoms[i].getVariable()[0] == 0)
+      if ((m_vecMonoms[i].getVariable().size() == 1 &&
+           m_vecMonoms[i].getVariable()[0] == 0) ||
+          m_vecMonoms[i].getVariable().empty())
         m_vecMonoms[i].setVariable(variable);
 
       if (m_vecMonoms[i].getVariable().size() == 1 &&
@@ -45,6 +54,20 @@ void Polynom::parsePolynom(std::string variable) {
                                  "error variable mismatch");
       }
     }
+  }
+}
+void Polynom::removeEqualMonoms() {
+  std::unordered_map<int, Monom> elementSum(m_vecMonoms.size());
+  for (Monom &num : m_vecMonoms) {
+    if (elementSum.find(num.getOrder()) == elementSum.end()) {
+      elementSum[num.getOrder()] = num;
+      continue;
+    }
+    elementSum[num.getOrder()] += num;
+  }
+  m_vecMonoms.clear();
+  for (const auto &[key, sum] : elementSum) {
+    m_vecMonoms.push_back(sum);
   }
 }
 
@@ -81,9 +104,14 @@ void Polynom::toNull(Polynom &toNull) {
     *this = toNull;
     toNull = tmp;
   }
-  toNull.parsePolynom(m_vecMonoms.begin()->getVariable());
+  if (m_defaultVariable == true)
+    toNull.parsePolynom();
+  else
+    toNull.parsePolynom(m_vecMonoms.begin()->getVariable());
   if (toNull.getMaxOrder() == 0 && this->getMaxOrder() == 0)
     return;
+  if (m_defaultVariable == true)
+    setVariables(toNull.getVecMonoms()[0].getVariable());
   int size = toNull.getVecMonoms().size();
   int idx = 0;
   for (int i = 0; i < size; i++) {
@@ -93,9 +121,6 @@ void Polynom::toNull(Polynom &toNull) {
       m_vecMonoms.push_back(Monom(name, toNull.getVecMonoms()[i].getOrder(),
                                   -toNull.getVecMonoms()[i].getValue()));
       continue;
-      // toNull.getVecMonoms()[i].getOrder(), 0)); throw
-      // std::runtime_error(std::string(__FUNCTION__) + ": " + "miss matching
-      // order between left and right parts");
     }
 
     if (toNull.getVecMonoms()[i].getValue() < 0)
@@ -117,6 +142,11 @@ void Polynom::cleanVecMonom() {
     auto iterator = m_vecMonoms.begin() + deleteIndexes[i];
     m_vecMonoms.erase(iterator);
   }
+}
+
+void Polynom::setVariables(std::string name) {
+  for (auto &monom : m_vecMonoms)
+    monom.setVariable(name);
 }
 
 std::vector<Monom> Polynom::getVecMonoms() const { return (m_vecMonoms); }

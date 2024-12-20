@@ -19,6 +19,7 @@ class Monom
 		Monom operator-(const Monom&);
 		void operator-=(const Monom&);
 		bool operator==(const Monom&);
+		bool operator!=(const Monom&);
 		Monom  abs() const;
 
 		std::string	getVariable() const;
